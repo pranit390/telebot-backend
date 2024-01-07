@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  adminId        Int              @id @default(autoincrement())
+  telegramUserId Int              @unique
+  adminName      String           @unique
+  role           Role             @default(ADMIN)
+  AdminAccessMap AdminAccessMap[]
+  User           User[]
+}
+
+model User {
+  userId         Int             @id @default(autoincrement())
+  telegramUserId Int             @unique
+  userName       String          @unique
+  admin          Admin?          @relation(fields: [adminId], references: [adminId])
+  adminId        Int?
+  role           Role            @default(USER)
+  userAccessMap  UserAccessMap[]
+}
+
+model Location {
+  locationId   Int        @id @default(autoincrement())
+  locationName String     @unique
+  Building     Building[]
+}
+
+model Building {
+  buildingId   Int      @id @default(autoincrement())
+  buildingName String
+  location     Location @relation(fields: [locationId], references: [locationId])
+  locationId   Int
+  Door         Door[]
+
+  @@unique([buildingName, locationId])
+}
+
+model Door {
+  doorId     Int      @id @default(autoincrement())
+  doorName   String
+  building   Building @relation(fields: [buildingId], references: [buildingId])
+  buildingId Int
+
+  @@unique([doorName, buildingId])
+}
+
+model UserAccessMap {
+  id         Int        @id @default(autoincrement())
+  user       User       @relation(fields: [userId], references: [userId])
+  userId     Int
+  entityId   Int
+  entityType EntityType
+
+  @@unique([userId, entityId, entityType])
+}
+
+model AdminAccessMap {
+  id         Int        @id @default(autoincrement())
+  admin      Admin      @relation(fields: [adminId], references: [adminId])
+  adminId    Int
+  entityId   Int
+  entityType EntityType
+
+  @@unique([adminId, entityId, entityType])
+}
+
+enum EntityType {
+  LOCATION
+  BUILDING
+  DOOR
+}
+
+enum Role {
+  ADMIN
+  SUPER_ADMIN
+  USER
+}
