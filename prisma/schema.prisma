@@ -33,28 +33,28 @@ model Location {
 }
 
 model Building {
-  buildingId   Int      @id @default(autoincrement())
+  buildingId   Int       @id @default(autoincrement())
   buildingName String
-  location     Location @relation(fields: [locationId], references: [locationId])
-  locationId   Int
+  location     Location? @relation(fields: [locationId], references: [locationId])
+  locationId   Int?
   Door         Door[]
 
   @@unique([buildingName, locationId])
 }
 
 model Door {
-  doorId     Int      @id @default(autoincrement())
+  doorId     Int       @id @default(autoincrement())
   doorName   String
-  building   Building @relation(fields: [buildingId], references: [buildingId])
-  buildingId Int
+  building   Building? @relation(fields: [buildingId], references: [buildingId])
+  buildingId Int?
 
   @@unique([doorName, buildingId])
 }
 
 model UserAccessMap {
   id         Int        @id @default(autoincrement())
-  user       User       @relation(fields: [userId], references: [userId])
-  userId     Int
+  user       User?      @relation(fields: [userId], references: [userId])
+  userId     Int?
   entityId   Int
   entityType EntityType
 
@@ -63,8 +63,8 @@ model UserAccessMap {
 
 model AdminAccessMap {
   id         Int        @id @default(autoincrement())
-  admin      Admin      @relation(fields: [adminId], references: [adminId])
-  adminId    Int
+  admin      Admin?     @relation(fields: [adminId], references: [adminId])
+  adminId    Int?
   entityId   Int
   entityType EntityType
 

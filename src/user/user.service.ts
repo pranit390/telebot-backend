@@ -26,7 +26,7 @@ export class UserService {
   }
 
   async getAllUsersOfAdmin(adminId: number) {
-    return this.prisma.user.findMany({
+    return this.prisma.admin.findMany({
       where: {
         adminId: adminId,
       },
