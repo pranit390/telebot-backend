@@ -1,31 +1,41 @@
 import { Injectable } from '@nestjs/common';
-import { BuildingDto } from 'src/common/dtos/building.dto';
+import { DoorDto } from 'src/common/dtos/door.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class DoorService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: BuildingDto) {
-    return this.prisma.building.create({ data });
+  async create(data: DoorDto) {
+    return this.prisma.door.create({ data });
   }
 
   async getAll() {
-    return this.prisma.building.findMany();
+    return this.prisma.door.findMany();
   }
 
-  async getOne(buildingId: number) {
-    return this.prisma.building.findFirst({
+  async getAllDoorByBuildingId(buildingId: number) {
+    return this.prisma.door.findMany({
+      where: { buildingId },
+    });
+  }
+
+  async getAllDoorByGatewayId(gatewayId: number) {
+    return this.prisma.door.findMany({ where: { gatewayId } });
+  }
+
+  async getOne(doorId: number) {
+    return this.prisma.door.findFirst({
       where: {
-        buildingId,
+        doorId,
       },
     });
   }
 
-  async deleteOne(buildingId: number) {
-    return this.prisma.building.delete({
+  async deleteOne(doorId: number) {
+    return this.prisma.door.delete({
       where: {
-        buildingId,
+        doorId,
       },
     });
   }

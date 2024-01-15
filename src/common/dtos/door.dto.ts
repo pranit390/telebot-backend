@@ -6,4 +6,7 @@ export class DoorDto {
 
   @IsInt()
   buildingId: number;
+
+  @IsInt()
+  gatewayId: number;
 }

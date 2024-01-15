@@ -47,6 +47,7 @@ model Door {
   doorName   String
   building   Building? @relation(fields: [buildingId], references: [buildingId], onDelete: SetNull)
   buildingId Int?
+  gatewayId  Int
 
   @@unique([doorName, buildingId])
 }
