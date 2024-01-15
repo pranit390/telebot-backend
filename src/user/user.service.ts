@@ -158,4 +158,12 @@ export class UserService {
       },
     });
   }
+
+  async getBuildingFromDoor(id: number) {
+    return this.prisma.door.findFirst({
+      where: {
+        doorId: id,
+      },
+    });
+  }
 }

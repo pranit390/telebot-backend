@@ -9,7 +9,8 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Admin, Role, User } from '@prisma/client';
+import { Admin, EntityType, Role, User } from '@prisma/client';
+import { BuildingService } from 'src/building/building.service';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { UserDec } from 'src/common/decorator/user.decorator';
 import {
@@ -61,20 +62,6 @@ export class UserController {
     return this.userService.getAllAdmin();
   }
 
-  @Delete('/:id')
-  @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard)
-  deleteUser(@Param('id') id: number, @UserDec() admin: Admin) {
-    return this.userService.deleteUser(+id, admin.adminId);
-  }
-
-  @Delete('/admin/:id')
-  @Roles(Role.SUPER_ADMIN)
-  @UseGuards(RolesGuard)
-  deleteAdmin(@Param('id') id: number) {
-    return this.userService.deleteAdmin(id);
-  }
-
   @Post('/user-access')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
@@ -111,7 +98,27 @@ export class UserController {
   @Delete('/user-access')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  deleteUserAccess(@UserDec() user, @Body() Body: UserAccessDto) {
+  async deleteUserAccess(@UserDec() user, @Body() Body: UserAccessDto) {
+    if (Body.entityType === EntityType.DOOR) {
+      const door = await this.userService.getBuildingFromDoor(Body.entityId);
+      console.log(door);
+
+      if (
+        AccessValidator(
+          user.role,
+          user?.AdminAccessMap,
+          door.buildingId,
+          EntityType.BUILDING,
+        )
+      ) {
+        return this.userService.removeUserAccess(
+          user.adminId,
+          Body.userId,
+          Body.entityId,
+          Body.entityType,
+        );
+      }
+    }
     if (
       AccessValidator(
         user.role,
@@ -128,5 +135,18 @@ export class UserController {
       );
     }
     throw new HttpException('forbidden', 403);
+  }
+  @Delete('/admin/:id')
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  deleteAdmin(@Param('id') id: number) {
+    return this.userService.deleteAdmin(id);
+  }
+
+  @Delete('/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  deleteUser(@Param('id') id: number, @UserDec() admin: Admin) {
+    return this.userService.deleteUser(+id, admin.adminId);
   }
 }
