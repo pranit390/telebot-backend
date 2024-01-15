@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -17,14 +18,14 @@ export class BuildingController {
   constructor(private readonly buildingService: BuildingService) {}
 
   @Get('/:id')
-  getMe(@Param() id: number) {
-    return this.buildingService.getOne(id);
+  getMe(@Param('id') id: number) {
+    return this.buildingService.getOne(+id);
   }
 
   @Post('/')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  create(data: BuildingDto) {
+  create(@Body() data: BuildingDto) {
     return this.buildingService.create(data);
   }
 
@@ -36,7 +37,7 @@ export class BuildingController {
   @Delete('/:id')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  async deleteOne(@Param() id: number) {
-    return this.buildingService.deleteOne(id);
+  async deleteOne(@Param('id') id: number) {
+    return this.buildingService.deleteOne(+id);
   }
 }

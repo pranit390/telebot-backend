@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -20,7 +20,7 @@ model User {
   userId         Int             @id @default(autoincrement())
   telegramUserId Int             @unique
   userName       String          @unique
-  admin          Admin?          @relation(fields: [adminId], references: [adminId])
+  admin          Admin?          @relation(fields: [adminId], references: [adminId], onDelete: SetNull)
   adminId        Int?
   role           Role            @default(USER)
   userAccessMap  UserAccessMap[]
@@ -35,7 +35,7 @@ model Location {
 model Building {
   buildingId   Int       @id @default(autoincrement())
   buildingName String
-  location     Location? @relation(fields: [locationId], references: [locationId])
+  location     Location? @relation(fields: [locationId], references: [locationId], onDelete: SetNull)
   locationId   Int?
   Door         Door[]
 
@@ -45,7 +45,7 @@ model Building {
 model Door {
   doorId     Int       @id @default(autoincrement())
   doorName   String
-  building   Building? @relation(fields: [buildingId], references: [buildingId])
+  building   Building? @relation(fields: [buildingId], references: [buildingId], onDelete: SetNull)
   buildingId Int?
 
   @@unique([doorName, buildingId])
@@ -53,7 +53,7 @@ model Door {
 
 model UserAccessMap {
   id         Int        @id @default(autoincrement())
-  user       User?      @relation(fields: [userId], references: [userId])
+  user       User?      @relation(fields: [userId], references: [userId], onDelete: SetNull)
   userId     Int?
   entityId   Int
   entityType EntityType
@@ -63,7 +63,7 @@ model UserAccessMap {
 
 model AdminAccessMap {
   id         Int        @id @default(autoincrement())
-  admin      Admin?     @relation(fields: [adminId], references: [adminId])
+  admin      Admin?     @relation(fields: [adminId], references: [adminId], onDelete: SetNull)
   adminId    Int?
   entityId   Int
   entityType EntityType

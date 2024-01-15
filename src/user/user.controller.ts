@@ -52,7 +52,7 @@ export class UserController {
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
   getAllAdmin(@UserDec() admin: Admin) {
-    return this.userService.getAllUsersOfAdmin(admin.adminId);
+    return this.userService.getAllAdmin();
   }
 
   @Delete('/:id')

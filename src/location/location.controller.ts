@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -17,14 +18,14 @@ export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Get('/:id')
-  getMe(@Param() id: number) {
-    return this.locationService.getOne(id);
+  getMe(@Param('id') id: number) {
+    return this.locationService.getOne(+id);
   }
 
   @Post('/')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  create(data: LocationDto) {
+  create(@Body() data: LocationDto) {
     return this.locationService.create(data);
   }
 
@@ -36,7 +37,7 @@ export class LocationController {
   @Delete('/:id')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  async deleteOne(@Param() id: number) {
-    return this.locationService.deleteOne(id);
+  async deleteOne(@Param('id') id: number) {
+    return this.locationService.deleteOne(+id);
   }
 }

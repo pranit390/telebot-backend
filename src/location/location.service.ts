@@ -7,7 +7,11 @@ export class LocationService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: LocationDto) {
-    return this.prisma.location.create({ data });
+    return this.prisma.location.create({
+      data: {
+        locationName: data.locationName,
+      },
+    });
   }
 
   async getAll() {

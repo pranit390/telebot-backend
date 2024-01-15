@@ -22,7 +22,7 @@ export class RolesGuard implements CanActivate {
         +telegramUserId,
       );
       request.user = user;
-      return this.matchRoles(roles, user.role);
+      return this.matchRoles(roles, user?.role);
     }
     return false;
   }
