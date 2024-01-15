@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { EntityType } from '@prisma/client';
 import { UserDto } from 'src/common/dtos/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -132,10 +132,22 @@ export class UserService {
   }
 
   async removeUserAccess(
+    adminId: number,
     userId: number,
     entityId: number,
     entityType: EntityType,
   ) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        userId: userId,
+        adminId: adminId,
+      },
+    });
+
+    if (!user?.userId) {
+      throw new HttpException('forbidden', 403);
+    }
+
     return this.prisma.userAccessMap.delete({
       where: {
         userId_entityId_entityType: {

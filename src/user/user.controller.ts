@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Patch,
   Post,
@@ -17,6 +18,7 @@ import {
   UserDto,
 } from 'src/common/dtos/user.dto';
 import { RolesGuard } from 'src/common/gurds/role.gurds';
+import { AccessValidator } from 'src/common/utils/access-validator';
 import { UserService } from './user.service';
 
 @Controller('v1/user')
@@ -93,5 +95,38 @@ export class UserController {
       Body.entityId,
       Body.entityType,
     );
+  }
+
+  @Delete('/admin-access')
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  deleteAdminAccess(@Body() Body: AdminAccessDto) {
+    return this.userService.removeAdminAccess(
+      Body.adminId,
+      Body.entityId,
+      Body.entityType,
+    );
+  }
+
+  @Delete('/user-access')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  deleteUserAccess(@UserDec() user, @Body() Body: UserAccessDto) {
+    if (
+      AccessValidator(
+        user.role,
+        user?.AdminAccessMap,
+        Body.entityId,
+        Body.entityType,
+      )
+    ) {
+      return this.userService.removeUserAccess(
+        user.adminId,
+        Body.userId,
+        Body.entityId,
+        Body.entityType,
+      );
+    }
+    throw new HttpException('forbidden', 403);
   }
 }
