@@ -14,6 +14,16 @@ export class BuildingService {
     return this.prisma.building.findMany();
   }
 
+  async getAllUserBuilding(ids: number[]) {
+    return this.prisma.building.findMany({
+      where: {
+        buildingId: {
+          in: ids,
+        },
+      },
+    });
+  }
+
   async getOne(buildingId: number) {
     return this.prisma.building.findFirst({
       where: {

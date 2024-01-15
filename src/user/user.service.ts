@@ -80,6 +80,9 @@ export class UserService {
       where: {
         telegramUserId,
       },
+      include: {
+        AdminAccessMap: {},
+      },
     });
     return admin;
   }

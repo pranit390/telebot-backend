@@ -8,10 +8,14 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Admin, EntityType, Role, User } from '@prisma/client';
+import { Admin, Role, User } from '@prisma/client';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { UserDec } from 'src/common/decorator/user.decorator';
-import { UserDto } from 'src/common/dtos/user.dto';
+import {
+  AdminAccessDto,
+  UserAccessDto,
+  UserDto,
+} from 'src/common/dtos/user.dto';
 import { RolesGuard } from 'src/common/gurds/role.gurds';
 import { UserService } from './user.service';
 
@@ -72,12 +76,10 @@ export class UserController {
   @Post('/user-access')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  assignUserAccess(
-    @Body() Body: { userId: number; enityId: number; entityType: EntityType },
-  ) {
+  assignUserAccess(@Body() Body: UserAccessDto) {
     return this.userService.assignUserAccess(
       Body.userId,
-      Body.enityId,
+      Body.entityId,
       Body.entityType,
     );
   }
@@ -85,12 +87,10 @@ export class UserController {
   @Post('/admin-access')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  assignAdminAccess(
-    @Body() Body: { adminId: number; enityId: number; entityType: EntityType },
-  ) {
+  assignAdminAccess(@Body() Body: AdminAccessDto) {
     return this.userService.assignAdminAccess(
       Body.adminId,
-      Body.enityId,
+      Body.entityId,
       Body.entityType,
     );
   }

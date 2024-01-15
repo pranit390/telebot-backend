@@ -3,14 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { EntityType, Role } from '@prisma/client';
 import { Roles } from 'src/common/decorator/role.decorator';
+import { UserDec } from 'src/common/decorator/user.decorator';
 import { DoorDto } from 'src/common/dtos/door.dto';
 import { RolesGuard } from 'src/common/gurds/role.gurds';
+import { AccessValidator } from 'src/common/utils/access-validator';
 import { DoorService } from './door.service';
 
 @Controller('v1/door')
@@ -25,8 +28,6 @@ export class DoorController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
   create(@Body() data: DoorDto) {
-    console.log('😃', data);
-
     return this.doorService.create(data);
   }
 
@@ -45,9 +46,14 @@ export class DoorController {
   }
 
   @Delete('/:id')
-  @Roles(Role.SUPER_ADMIN)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
-  async deleteOne(@Param('id') id: number) {
-    return this.doorService.deleteOne(+id);
+  async deleteOne(@UserDec() user, @Param('id') id: number) {
+    if (
+      AccessValidator(user.role, user?.AdminAccessMap, +id, EntityType.DOOR)
+    ) {
+      return this.doorService.deleteOne(+id);
+    }
+    throw new HttpException('forbidden', 403);
   }
 }

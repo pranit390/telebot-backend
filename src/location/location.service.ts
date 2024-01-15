@@ -14,7 +14,17 @@ export class LocationService {
     });
   }
 
-  async getAll() {
+  async getAllUserLocation(ids: number[]) {
+    return this.prisma.location.findMany({
+      where: {
+        locationId: {
+          in: ids,
+        },
+      },
+    });
+  }
+
+  async getAllLocations() {
     return this.prisma.location.findMany();
   }
 

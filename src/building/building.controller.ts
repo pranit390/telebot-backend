@@ -3,14 +3,18 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { EntityType, Role } from '@prisma/client';
 import { Roles } from 'src/common/decorator/role.decorator';
+import { UserDec } from 'src/common/decorator/user.decorator';
 import { BuildingDto } from 'src/common/dtos/building.dto';
 import { RolesGuard } from 'src/common/gurds/role.gurds';
+import { AccessValidator } from 'src/common/utils/access-validator';
+import { UserEntitiesByType } from 'src/common/utils/user-entitites';
 import { BuildingService } from './building.service';
 
 @Controller('v1/building')
@@ -18,7 +22,7 @@ export class BuildingController {
   constructor(private readonly buildingService: BuildingService) {}
 
   @Get('/:id')
-  getMe(@Param('id') id: number) {
+  getOne(@Param('id') id: number) {
     return this.buildingService.getOne(+id);
   }
 
@@ -30,14 +34,30 @@ export class BuildingController {
   }
 
   @Get('/')
-  async getAll() {
-    return this.buildingService.getAll();
+  @Roles()
+  @UseGuards(RolesGuard)
+  async getAll(@UserDec() user) {
+    if (user.role == Role.SUPER_ADMIN) {
+      return this.buildingService.getAll();
+    }
+
+    const userEntitiesIds = UserEntitiesByType(
+      user?.AdminAccessMap,
+      EntityType.BUILDING,
+    );
+
+    return this.buildingService.getAllUserBuilding(userEntitiesIds);
   }
 
   @Delete('/:id')
-  @Roles(Role.SUPER_ADMIN)
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
-  async deleteOne(@Param('id') id: number) {
-    return this.buildingService.deleteOne(+id);
+  async deleteOne(@UserDec() user, @Param('id') id: number) {
+    if (
+      AccessValidator(user.role, user?.AdminAccessMap, +id, EntityType.BUILDING)
+    ) {
+      return this.buildingService.deleteOne(+id);
+    }
+    throw new HttpException('forbidden', 403);
   }
 }
