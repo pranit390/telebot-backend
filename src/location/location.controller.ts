@@ -22,8 +22,13 @@ export class LocationController {
   constructor(private readonly locationService: LocationService) {}
 
   @Get('/:id')
-  getMe(@Param('id') id: number) {
+  getLocationId(@Param('id') id: number) {
     return this.locationService.getOne(+id);
+  }
+
+  @Get('name/:name')
+  getLocationByName(@Param('name') name: string) {
+    return this.locationService.getLocationByName(name);
   }
 
   @Post('/')

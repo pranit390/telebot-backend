@@ -35,6 +35,13 @@ export class LocationService {
       },
     });
   }
+  async getLocationByName(name: string) {
+    return this.prisma.location.findFirst({
+      where: {
+        locationName: name,
+      },
+    });
+  }
 
   async deleteOne(locationId: number) {
     return this.prisma.location.delete({
