@@ -34,7 +34,7 @@ export class BuildingController {
   }
 
   @Get('/')
-  @Roles()
+  @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
   async getAll(@UserDec() user) {
     if (user.role == Role.SUPER_ADMIN) {

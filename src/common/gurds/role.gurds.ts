@@ -6,6 +6,9 @@ import { UserService } from 'src/user/user.service';
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector, private userService: UserService) {}
   matchRoles(roles: string[], userRole: string) {
+    if (!roles?.length) {
+      return true;
+    }
     return roles.some((role) => role === userRole);
   }
 
