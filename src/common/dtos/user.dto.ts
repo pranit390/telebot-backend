@@ -9,6 +9,14 @@ export class UserDto {
   telegramUserId: number;
 }
 
+export class AdminDto {
+  @IsString()
+  adminName: string;
+
+  @IsInt()
+  telegramUserId: number;
+}
+
 export class AdminAccessDto {
   @IsInt()
   adminId: number;

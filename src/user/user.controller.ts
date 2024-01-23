@@ -15,6 +15,7 @@ import { Roles } from 'src/common/decorator/role.decorator';
 import { UserDec } from 'src/common/decorator/user.decorator';
 import {
   AdminAccessDto,
+  AdminDto,
   UserAccessDto,
   UserDto,
 } from 'src/common/dtos/user.dto';
@@ -36,6 +37,13 @@ export class UserController {
   @Post('/')
   create(@Body() data: UserDto) {
     return this.userService.create(data);
+  }
+
+  @Post('/admin')
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  createAdmin(@Body() data: AdminDto) {
+    return this.userService.createAdmin(data);
   }
 
   @Patch('/:telegramUserId')
@@ -140,7 +148,7 @@ export class UserController {
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
   deleteAdmin(@Param('id') id: number) {
-    return this.userService.deleteAdmin(id);
+    return this.userService.deleteAdmin(+id);
   }
 
   @Delete('/:id')

@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { EntityType } from '@prisma/client';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { AdminDto, UserDto } from 'src/common/dtos/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -11,6 +11,15 @@ export class UserService {
     return this.prisma.user.create({
       data: {
         userName: data.userName,
+        telegramUserId: data.telegramUserId,
+      },
+    });
+  }
+
+  async createAdmin(data: AdminDto) {
+    return this.prisma.admin.create({
+      data: {
+        adminName: data.adminName,
         telegramUserId: data.telegramUserId,
       },
     });
