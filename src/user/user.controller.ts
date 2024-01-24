@@ -35,8 +35,10 @@ export class UserController {
   }
 
   @Post('/')
-  create(@Body() data: UserDto) {
-    return this.userService.create(data);
+  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  create(@UserDec() admin: Admin, @Body() data: UserDto) {
+    return this.userService.create(data, admin.adminId);
   }
 
   @Post('/admin')
@@ -44,16 +46,6 @@ export class UserController {
   @UseGuards(RolesGuard)
   createAdmin(@Body() data: AdminDto) {
     return this.userService.createAdmin(data);
-  }
-
-  @Patch('/:telegramUserId')
-  @Roles(Role.ADMIN, Role.SUPER_ADMIN)
-  @UseGuards(RolesGuard)
-  UpdateUser(
-    @UserDec() admin: Admin,
-    @Param('telegramUserId') telegramUserId: number,
-  ) {
-    return this.userService.updateUser(+telegramUserId, admin.adminId);
   }
 
   @Get('/')
