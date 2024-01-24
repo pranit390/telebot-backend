@@ -49,8 +49,15 @@ export class DoorController {
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
   async deleteOne(@UserDec() user, @Param('id') id: number) {
+    const door = await this.doorService.getOne(+id);
     if (
-      AccessValidator(user.role, user?.AdminAccessMap, +id, EntityType.DOOR)
+      door?.buildingId &&
+      AccessValidator(
+        user.role,
+        user?.AdminAccessMap,
+        +door.buildingId,
+        EntityType.BUILDING,
+      )
     ) {
       return this.doorService.deleteOne(+id);
     }
