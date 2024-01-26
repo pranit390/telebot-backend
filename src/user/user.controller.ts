@@ -74,7 +74,7 @@ export class UserController {
   }
 
   @Post('/admin-access')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
   assignAdminAccess(@Body() Body: AdminAccessDto) {
     return this.userService.assignAdminAccess(
