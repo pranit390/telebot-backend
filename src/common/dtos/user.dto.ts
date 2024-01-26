@@ -28,3 +28,13 @@ export class UserAccessDto {
   @IsEnum(EntityType)
   entityType: EntityType;
 }
+
+export class UserOpenDoorDto {
+  @IsInt()
+  userId: number;
+  @IsInt()
+  entityId: number;
+
+  @IsEnum(EntityType)
+  entityType: EntityType;
+}

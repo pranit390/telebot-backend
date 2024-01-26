@@ -30,6 +30,7 @@ export class PrismaService
     });
   }
   async onModuleInit(): Promise<void> {
+    
     this.$on('error', (event) => {
       this.logger.error(event);
     });

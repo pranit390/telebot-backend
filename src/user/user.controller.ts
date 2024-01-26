@@ -17,6 +17,7 @@ import {
   AdminAccessDto,
   UserAccessDto,
   UserDto,
+  UserOpenDoorDto,
 } from 'src/common/dtos/user.dto';
 import { RolesGuard } from 'src/common/gurds/role.gurds';
 import { AccessValidator } from 'src/common/utils/access-validator';
@@ -63,10 +64,22 @@ export class UserController {
   }
 
   @Post('/user-access')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.USER)
   @UseGuards(RolesGuard)
-  assignUserAccess(@Body() Body: UserAccessDto) {
+  opendoor(@Body() Body: UserAccessDto) {
     return this.userService.assignUserAccess(
+      Body.userId,
+      Body.entityId,
+      Body.entityType,
+    );
+  }
+
+
+  @Post('/open-door')
+  // @Roles(Role.USER, Role.ADMIN)
+  // @UseGuards(RolesGuard)
+  assignUserAccess(@Body() Body: UserOpenDoorDto) {
+    return this.userService.openDoor(
       Body.userId,
       Body.entityId,
       Body.entityType,

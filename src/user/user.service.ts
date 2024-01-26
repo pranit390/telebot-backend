@@ -2,10 +2,15 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { EntityType } from '@prisma/client';
 import { UserDto } from 'src/common/dtos/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MqttService } from '../mqtt/mqtt.service';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private mqtt:MqttService) {
+
+
+  }
 
   async create(data: UserDto) {
     return this.prisma.user.create({
@@ -99,6 +104,27 @@ export class UserService {
         entityType,
       },
     });
+  }
+
+  async openDoor(
+    userId: number,
+    entityId: number,
+    entityType: EntityType,
+  ) {
+   
+   if(entityType !== 'DOOR'){
+    throw new Error('Badrequest');
+   }
+    // const door = await this.prisma.door.findFirst({
+    //   where: {
+    //     doorId: entityId,
+    //   },
+    // });
+
+ const data = await this.mqtt.publish('pranitbhatt/feeds/welcom-new','pranitbhfff');
+console.log(data);
+
+    
   }
 
   async assignAdminAccess(
