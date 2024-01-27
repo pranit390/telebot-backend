@@ -20,8 +20,15 @@ export class DoorService {
     });
   }
 
-  async getAllDoorByGatewayId(gatewayId: number) {
-    return this.prisma.door.findMany({ where: { gatewayId } });
+  async getAllGatewayByBuildingId(buildingId: number) {
+    return this.prisma.door.groupBy({
+      where: { buildingId },
+      by: ['gatewayMacId'],
+    });
+  }
+
+  async getAllDoorByGatewayId(gatewayMacId: string) {
+    return this.prisma.door.findMany({ where: { gatewayMacId } });
   }
 
   async getOne(doorId: number) {
