@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Admin, EntityType, Role, User } from '@prisma/client';
-import { BuildingService } from 'src/building/building.service';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { UserDec } from 'src/common/decorator/user.decorator';
 import {
