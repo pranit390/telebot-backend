@@ -115,17 +115,25 @@ export class UserService {
    if(entityType !== 'DOOR'){
     throw new Error('Badrequest');
    }
-    // const door = await this.prisma.door.findFirst({
-    //   where: {
-    //     doorId: entityId,
-    //   },
-    // });
+    const door = await this.prisma.door.findFirst({
+      where: {
+        doorId: entityId,
+      },
+    });
 
- const data = await this.mqtt.publish('pranitbhatt/feeds/welcom-new','pranitbhfff');
-console.log(data);
+    if(entityType !== 'DOOR'){
+      throw new Error('Badrequest');
+     }
+    const payload = {
+      gateway_id :door.gatewayId,
+      door_id: door.doorId,
+    }
 
-    
-  }
+ return await this.mqtt.publish(`pranitbhatt/feeds/${door.gatewayId}`,JSON.stringify(payload));
+
+
+
+}
 
   async assignAdminAccess(
     adminId: number,
