@@ -9,7 +9,7 @@ datasource db {
 
 model Admin {
   adminId        Int              @id @default(autoincrement())
-  telegramUserId Int              @unique
+  telegramUserId BigInt           @unique
   adminName      String           @unique
   role           Role             @default(ADMIN)
   AdminAccessMap AdminAccessMap[]
@@ -18,7 +18,7 @@ model Admin {
 
 model User {
   userId         Int             @id @default(autoincrement())
-  telegramUserId Int             @unique
+  telegramUserId BigInt          @unique
   userName       String          @unique
   admin          Admin?          @relation(fields: [adminId], references: [adminId], onDelete: SetNull)
   adminId        Int?
