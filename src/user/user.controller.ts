@@ -138,14 +138,14 @@ export class UserController {
   @Delete('/admin/:id')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  deleteAdmin(@Param('id') id: number) {
-    return this.userService.deleteAdmin(+id);
+  deleteAdmin(@Param('id') id: string) {
+    return this.userService.deleteAdmin(id);
   }
 
   @Delete('/:id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  deleteUser(@Param('id') id: number, @UserDec() admin: Admin) {
-    return this.userService.deleteUser(+id, admin.adminId);
+  deleteUser(@Param('id') id: string, @UserDec() admin: Admin) {
+    return this.userService.deleteUser(id, admin.adminId);
   }
 }

@@ -5,5 +5,5 @@ export class AdminDto {
   adminName: string;
 
   @IsInt()
-  telegramUserId: number;
+  telegramUserId: string;
 }

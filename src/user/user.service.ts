@@ -26,7 +26,7 @@ export class UserService {
     });
   }
 
-  async updateUser(telegramUserId: number, adminId: number) {
+  async updateUser(telegramUserId: string, adminId: number) {
     return this.prisma.user.update({
       where: { telegramUserId },
       data: {
@@ -47,7 +47,7 @@ export class UserService {
     return this.prisma.admin.findMany();
   }
 
-  async getOne(telegramUserId: number) {
+  async getOne(telegramUserId: string) {
     return this.prisma.user.findFirst({
       where: {
         telegramUserId,
@@ -55,7 +55,7 @@ export class UserService {
     });
   }
 
-  async deleteUser(telegramUserId: number, adminId: number) {
+  async deleteUser(telegramUserId: string, adminId: number) {
     return this.prisma.user.delete({
       where: {
         telegramUserId,
@@ -64,7 +64,7 @@ export class UserService {
     });
   }
 
-  async deleteAdmin(telegramUserId: number) {
+  async deleteAdmin(telegramUserId: string) {
     return this.prisma.admin.delete({
       where: {
         telegramUserId,
@@ -72,7 +72,7 @@ export class UserService {
     });
   }
 
-  async getAdminOrUserDetails(telegramUserId: number) {
+  async getAdminOrUserDetails(telegramUserId: string) {
     const user = await this.prisma.user.findFirst({
       where: {
         telegramUserId,
