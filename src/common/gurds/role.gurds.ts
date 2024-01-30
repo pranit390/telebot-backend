@@ -21,9 +21,7 @@ export class RolesGuard implements CanActivate {
     const telegramUserId = request.headers['x-user-details'];
 
     if (telegramUserId) {
-      const user = await this.userService.getAdminOrUserDetails(
-        +telegramUserId,
-      );
+      const user = await this.userService.getAdminOrUserDetails(telegramUserId);
       request.user = user;
       return this.matchRoles(roles, user?.role);
     }

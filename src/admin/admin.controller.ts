@@ -7,7 +7,7 @@ export class AdminController {
   constructor(private readonly adminService: AdminService) {}
 
   @Get('/:id')
-  getMe(@Param() id: number) {
+  getMe(@Param() id: string) {
     return this.adminService.getOne(id);
   }
 
@@ -22,7 +22,7 @@ export class AdminController {
   }
 
   @Get('/:id')
-  async deleteOne(@Param() id: number) {
+  async deleteOne(@Param() id: string) {
     return this.adminService.deleteOne(id);
   }
 }

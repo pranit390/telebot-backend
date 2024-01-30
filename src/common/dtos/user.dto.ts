@@ -5,8 +5,16 @@ export class UserDto {
   @IsString()
   userName: string;
 
-  @IsInt()
-  telegramUserId: number;
+  @IsString()
+  telegramUserId: string;
+}
+
+export class AdminDto {
+  @IsString()
+  adminName: string;
+
+  @IsString()
+  telegramUserId: string;
 }
 
 export class AdminAccessDto {

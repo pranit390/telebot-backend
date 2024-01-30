@@ -10,11 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Admin, EntityType, Role, User } from '@prisma/client';
-import { BuildingService } from 'src/building/building.service';
 import { Roles } from 'src/common/decorator/role.decorator';
 import { UserDec } from 'src/common/decorator/user.decorator';
 import {
   AdminAccessDto,
+  AdminDto,
   UserAccessDto,
   UserDto,
   UserOpenDoorDto,
@@ -35,18 +35,17 @@ export class UserController {
   }
 
   @Post('/')
-  create(@Body() data: UserDto) {
-    return this.userService.create(data);
-  }
-
-  @Patch('/:telegramUserId')
   @Roles(Role.ADMIN, Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  UpdateUser(
-    @UserDec() admin: Admin,
-    @Param('telegramUserId') telegramUserId: number,
-  ) {
-    return this.userService.updateUser(+telegramUserId, admin.adminId);
+  create(@UserDec() admin: Admin, @Body() data: UserDto) {
+    return this.userService.create(data, admin.adminId);
+  }
+
+  @Post('/admin')
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  createAdmin(@Body() data: AdminDto) {
+    return this.userService.createAdmin(data);
   }
 
   @Get('/')
@@ -87,7 +86,7 @@ export class UserController {
   }
 
   @Post('/admin-access')
-  @Roles(Role.ADMIN)
+  @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
   assignAdminAccess(@Body() Body: AdminAccessDto) {
     return this.userService.assignAdminAccess(
@@ -152,14 +151,14 @@ export class UserController {
   @Delete('/admin/:id')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
-  deleteAdmin(@Param('id') id: number) {
+  deleteAdmin(@Param('id') id: string) {
     return this.userService.deleteAdmin(id);
   }
 
   @Delete('/:id')
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  deleteUser(@Param('id') id: number, @UserDec() admin: Admin) {
-    return this.userService.deleteUser(+id, admin.adminId);
+  deleteUser(@Param('id') id: string, @UserDec() admin: Admin) {
+    return this.userService.deleteUser(id, admin.adminId);
   }
 }

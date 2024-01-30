@@ -9,7 +9,7 @@ datasource db {
 
 model Admin {
   adminId        Int              @id @default(autoincrement())
-  telegramUserId Int              @unique
+  telegramUserId String           @unique
   adminName      String           @unique
   role           Role             @default(ADMIN)
   AdminAccessMap AdminAccessMap[]
@@ -18,7 +18,7 @@ model Admin {
 
 model User {
   userId         Int             @id @default(autoincrement())
-  telegramUserId Int             @unique
+  telegramUserId String          @unique
   userName       String          @unique
   admin          Admin?          @relation(fields: [adminId], references: [adminId], onDelete: SetNull)
   adminId        Int?
@@ -43,13 +43,14 @@ model Building {
 }
 
 model Door {
-  doorId     Int       @id @default(autoincrement())
-  doorName   String
-  building   Building? @relation(fields: [buildingId], references: [buildingId], onDelete: SetNull)
-  buildingId Int?
-  gatewayId  Int
+  doorId       Int       @id @default(autoincrement())
+  doorName     String
+  building     Building? @relation(fields: [buildingId], references: [buildingId], onDelete: SetNull)
+  buildingId   Int?
+  doorMacId    String    @default("")
+  gatewayMacId String    @default("")
 
-  @@unique([doorName, buildingId])
+  @@unique([doorMacId, buildingId, gatewayMacId])
 }
 
 model UserAccessMap {

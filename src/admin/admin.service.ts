@@ -14,7 +14,7 @@ export class AdminService {
     return this.prisma.admin.findMany();
   }
 
-  async getOne(telegramUserId: number) {
+  async getOne(telegramUserId: string) {
     return this.prisma.admin.findFirst({
       where: {
         telegramUserId,
@@ -22,7 +22,7 @@ export class AdminService {
     });
   }
 
-  async deleteOne(telegramUserId: number) {
+  async deleteOne(telegramUserId: string) {
     return this.prisma.admin.delete({
       where: {
         telegramUserId,

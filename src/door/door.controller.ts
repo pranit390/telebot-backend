@@ -19,10 +19,6 @@ import { DoorService } from './door.service';
 @Controller('v1/door')
 export class DoorController {
   constructor(private readonly doorService: DoorService) {}
-  @Get('/:id')
-  getMe(@Param('id') id: number) {
-    return this.doorService.getOne(+id);
-  }
 
   @Post('/')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
@@ -30,27 +26,44 @@ export class DoorController {
   create(@Body() data: DoorDto) {
     return this.doorService.create(data);
   }
+  @Get('/')
+  async getAll() {
+    return this.doorService.getAll();
+  }
 
   @Get('/building/:id')
   async getAllDoorByBuildingId(@Param('id') id: number) {
     return this.doorService.getAllDoorByBuildingId(+id);
   }
-  @Get('/gateway/:id')
-  async getAllDoorByGatewayId(@Param('id') id: number) {
-    return this.doorService.getAllDoorByGatewayId(+id);
+
+  @Get('/building/:id/gateway')
+  async getAllGatewaysByBuildingId(@Param('id') id: number) {
+    return this.doorService.getAllGatewayByBuildingId(+id);
   }
 
-  @Get('/')
-  async getAll() {
-    return this.doorService.getAll();
+  @Get('/gateway/:id')
+  async getAllDoorByGatewayId(@Param('id') id: string) {
+    return this.doorService.getAllDoorByGatewayId(id);
+  }
+
+  @Get('/:id')
+  getMe(@Param('id') id: number) {
+    return this.doorService.getOne(+id);
   }
 
   @Delete('/:id')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
   async deleteOne(@UserDec() user, @Param('id') id: number) {
+    const door = await this.doorService.getOne(+id);
     if (
-      AccessValidator(user.role, user?.AdminAccessMap, +id, EntityType.DOOR)
+      door?.buildingId &&
+      AccessValidator(
+        user.role,
+        user?.AdminAccessMap,
+        +door.buildingId,
+        EntityType.BUILDING,
+      )
     ) {
       return this.doorService.deleteOne(+id);
     }

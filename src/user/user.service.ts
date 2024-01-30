@@ -1,6 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { EntityType } from '@prisma/client';
-import { UserDto } from 'src/common/dtos/user.dto';
+import { AdminDto, UserDto } from 'src/common/dtos/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MqttService } from '../mqtt/mqtt.service';
 import { throwError } from 'rxjs';
@@ -12,16 +12,26 @@ export class UserService {
 
   }
 
-  async create(data: UserDto) {
+  async create(data: UserDto, adminId: number) {
     return this.prisma.user.create({
       data: {
         userName: data.userName,
+        telegramUserId: data.telegramUserId,
+        adminId: adminId,
+      },
+    });
+  }
+
+  async createAdmin(data: AdminDto) {
+    return this.prisma.admin.create({
+      data: {
+        adminName: data.adminName,
         telegramUserId: data.telegramUserId,
       },
     });
   }
 
-  async updateUser(telegramUserId: number, adminId: number) {
+  async updateUser(telegramUserId: string, adminId: number) {
     return this.prisma.user.update({
       where: { telegramUserId },
       data: {
@@ -42,7 +52,7 @@ export class UserService {
     return this.prisma.admin.findMany();
   }
 
-  async getOne(telegramUserId: number) {
+  async getOne(telegramUserId: string) {
     return this.prisma.user.findFirst({
       where: {
         telegramUserId,
@@ -50,7 +60,7 @@ export class UserService {
     });
   }
 
-  async deleteUser(telegramUserId: number, adminId: number) {
+  async deleteUser(telegramUserId: string, adminId: number) {
     return this.prisma.user.delete({
       where: {
         telegramUserId,
@@ -59,7 +69,7 @@ export class UserService {
     });
   }
 
-  async deleteAdmin(telegramUserId: number) {
+  async deleteAdmin(telegramUserId: string) {
     return this.prisma.admin.delete({
       where: {
         telegramUserId,
@@ -67,7 +77,7 @@ export class UserService {
     });
   }
 
-  async getAdminOrUserDetails(telegramUserId: number) {
+  async getAdminOrUserDetails(telegramUserId: string) {
     const user = await this.prisma.user.findFirst({
       where: {
         telegramUserId,
