@@ -3,7 +3,7 @@ import { EntityType } from '@prisma/client';
 import { AdminDto, UserDto } from 'src/common/dtos/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MqttService } from '../mqtt/mqtt.service';
-import { throwError } from 'rxjs';
+
 
 @Injectable()
 export class UserService {
@@ -135,11 +135,11 @@ export class UserService {
       throw new Error('Badrequest');
      }
     const payload = {
-      gateway_id :door.gatewayId,
+      gateway_id :door.gatewayMacId,
       door_id: door.doorId,
     }
 
- return await this.mqtt.publish(`pranitbhatt/feeds/${door.gatewayId}`,JSON.stringify(payload));
+ return await this.mqtt.publish(`pranitbhatt/feeds/${door.gatewayMacId}`,JSON.stringify(payload));
 
 
 
