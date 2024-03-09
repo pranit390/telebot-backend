@@ -18,12 +18,14 @@ model Admin {
 
 model User {
   userId         Int             @id @default(autoincrement())
-  telegramUserId String          @unique
-  userName       String          @unique
+  telegramUserId String         
+  userName       String         
   admin          Admin?          @relation(fields: [adminId], references: [adminId], onDelete: SetNull)
   adminId        Int?
   role           Role            @default(USER)
   userAccessMap  UserAccessMap[]
+
+  @@unique([telegramUserId, adminId], name: "UniqueTelegramUserAdmin")
 }
 
 model Location {
@@ -49,6 +51,7 @@ model Door {
   buildingId   Int?
   doorMacId    String    @default("")
   gatewayMacId String    @default("")
+  isActive     Int       @default(0)
 
   @@unique([doorMacId, buildingId, gatewayMacId])
 }

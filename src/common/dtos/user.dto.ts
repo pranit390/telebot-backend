@@ -30,19 +30,14 @@ export class AdminAccessDto {
 export class UserAccessDto {
   @IsInt()
   userId: number;
-  @IsInt()
-  entityId: number;
+
+  entityId: string;
 
   @IsEnum(EntityType)
   entityType: EntityType;
 }
 
 export class UserOpenDoorDto {
-  @IsInt()
-  userId: number;
-  @IsInt()
-  entityId: number;
-
-  @IsEnum(EntityType)
-  entityType: EntityType;
+  @IsString()
+  entityId: string;
 }

@@ -23,8 +23,8 @@ export class DoorController {
   @Post('/')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
-  create(@Body() data: DoorDto) {
-    return this.doorService.create(data);
+  create(@Body() data: DoorDto, @UserDec() user) {
+    return this.doorService.create(data, user.telegramUserId);
   }
   @Get('/')
   async getAll() {
@@ -69,4 +69,23 @@ export class DoorController {
     }
     throw new HttpException('forbidden', 403);
   }
+
+  @Delete('/gateway/:gatewayMacId')
+  @Roles(Role.SUPER_ADMIN)
+  @UseGuards(RolesGuard)
+  async deleteGateway(@UserDec() user, @Param('gatewayMacId') gatewayMacId: string) {
+      return this.doorService.deleteAllNodeAndGatewayusingGatewaymacid(gatewayMacId);
+  }
+
+  @Get('/info/all')
+  @Roles(Role.USER)
+  @UseGuards(RolesGuard)
+  async getDoorInfoById(@Body()body:GetDoorInfoByIdsDto) {
+   
+    return this.doorService.getDoorInfoById(body.doorIds);
+  }
+}
+
+type GetDoorInfoByIdsDto = {
+  doorIds: Array<number>
 }

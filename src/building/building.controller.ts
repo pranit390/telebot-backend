@@ -43,21 +43,34 @@ export class BuildingController {
 
     const userEntitiesIds = UserEntitiesByType(
       user?.AdminAccessMap,
-      EntityType.BUILDING,
+      EntityType.LOCATION,
     );
 
     return this.buildingService.getAllUserBuilding(userEntitiesIds);
+  }
+
+  @Get('/location/id')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  async getBuildingsByLocationId(@Body()body: GetBuildingByLocationArrayDto) {
+   
+    return this.buildingService.getBuildingsByLocationId(body.locationIdArray);
   }
 
   @Delete('/:id')
   @Roles(Role.SUPER_ADMIN, Role.ADMIN)
   @UseGuards(RolesGuard)
   async deleteOne(@UserDec() user, @Param('id') id: number) {
-    if (
+   if (
       AccessValidator(user.role, user?.AdminAccessMap, +id, EntityType.BUILDING)
     ) {
       return this.buildingService.deleteOne(+id);
     }
     throw new HttpException('forbidden', 403);
+
   }
+}
+
+type GetBuildingByLocationArrayDto = {
+  locationIdArray: Array<number>
 }

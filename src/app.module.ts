@@ -13,7 +13,9 @@ import { PrismaService } from './prisma/prisma.service';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
 import { MqttModule } from './mqtt/mqtt.module';
-import { MqttService } from './mqtt/mqtt.service';
+import { CronService } from './cron/cron.service';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
@@ -24,7 +26,9 @@ import { MqttService } from './mqtt/mqtt.service';
     BuildingModule,
     DoorModule,
     AdminModule,
-    MqttModule
+    MqttModule,
+    ScheduleModule.forRoot(),
+    TelegramModule
   ],
   controllers: [AppController],
   providers: [
@@ -35,6 +39,7 @@ import { MqttService } from './mqtt/mqtt.service';
     LocationService,
     BuildingService,
     DoorService,
+    CronService,
   ],
 })
 export class AppModule {}

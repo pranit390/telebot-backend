@@ -17,7 +17,7 @@ export class BuildingService {
   async getAllUserBuilding(ids: number[]) {
     return this.prisma.building.findMany({
       where: {
-        buildingId: {
+        locationId: {
           in: ids,
         },
       },
@@ -32,6 +32,16 @@ export class BuildingService {
     });
   }
 
+  async getBuildingsByLocationId(locationIdArray: number[]) {
+    return this.prisma.building.findMany({
+        where: {
+            locationId: {
+                in: locationIdArray
+            }
+        },
+    });
+}
+
   async deleteOne(buildingId: number) {
     return this.prisma.building.delete({
       where: {
@@ -40,3 +50,4 @@ export class BuildingService {
     });
   }
 }
+

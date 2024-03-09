@@ -55,6 +55,14 @@ export class UserController {
     return this.userService.getAllUsersOfAdmin(admin.adminId);
   }
 
+
+  @Get('/all-doors')
+  @Roles(Role.ADMIN)
+  @UseGuards(RolesGuard)
+  getAllDoors(@UserDec() admin: Admin) {
+    return this.userService.getAllUsersOfAdmin(admin.adminId);
+  }
+
   @Get('/admin')
   @Roles(Role.SUPER_ADMIN)
   @UseGuards(RolesGuard)
@@ -66,22 +74,22 @@ export class UserController {
   @Roles(Role.ADMIN, Role.USER)
   @UseGuards(RolesGuard)
   opendoor(@Body() Body: UserAccessDto) {
+  
     return this.userService.assignUserAccess(
       Body.userId,
-      Body.entityId,
+      Number(Body.entityId),
       Body.entityType,
     );
   }
 
 
   @Post('/open-door')
-  // @Roles(Role.USER, Role.ADMIN)
-  // @UseGuards(RolesGuard)
-  assignUserAccess(@Body() Body: UserOpenDoorDto) {
+  @Roles(Role.USER, Role.ADMIN)
+  @UseGuards(RolesGuard)
+  assignUserAccess(@Body() body: UserOpenDoorDto, @UserDec() user) {
     return this.userService.openDoor(
-      Body.userId,
-      Body.entityId,
-      Body.entityType,
+          body.entityId,
+          user.telegramUserId
     );
   }
 
@@ -111,42 +119,13 @@ export class UserController {
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
   async deleteUserAccess(@UserDec() user, @Body() Body: UserAccessDto) {
-    if (Body.entityType === EntityType.DOOR) {
-      const door = await this.userService.getBuildingFromDoor(Body.entityId);
-      console.log(door);
-
-      if (
-        AccessValidator(
-          user.role,
-          user?.AdminAccessMap,
-          door.buildingId,
-          EntityType.BUILDING,
-        )
-      ) {
-        return this.userService.removeUserAccess(
-          user.adminId,
-          Body.userId,
-          Body.entityId,
-          Body.entityType,
-        );
-      }
-    }
-    if (
-      AccessValidator(
-        user.role,
-        user?.AdminAccessMap,
-        Body.entityId,
-        Body.entityType,
-      )
-    ) {
+  
       return this.userService.removeUserAccess(
         user.adminId,
         Body.userId,
-        Body.entityId,
+        Number(Body.entityId),
         Body.entityType,
       );
-    }
-    throw new HttpException('forbidden', 403);
   }
   @Delete('/admin/:id')
   @Roles(Role.SUPER_ADMIN)

@@ -1,13 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { DoorDto } from 'src/common/dtos/door.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { MqttService } from '../mqtt/mqtt.service';
 
 @Injectable()
 export class DoorService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private mqtt:MqttService) {}
 
-  async create(data: DoorDto) {
-    return this.prisma.door.create({ data });
+  async create(data: DoorDto, userId:string) {
+
+    const createdData = await this.prisma.door.create({ data });
+   try{ const  payload = {
+
+      "gateway_id": data.gatewayMacId,
+      
+      "command":  "onboard",
+      
+      "door_id": data.gatewayMacId == data.doorMacId? 0 :data.doorMacId,
+      
+      "user_id": userId
+      
+      };
+    await this.mqtt.publish(`pranitbhatt/feeds/${data.gatewayMacId}`,JSON.stringify(payload));
+   }
+   catch(err){
+    console.error(`onboarding failed:${err}`)
+   }
+
+    return createdData;
   }
 
   async getAll() {
@@ -21,10 +41,11 @@ export class DoorService {
   }
 
   async getAllGatewayByBuildingId(buildingId: number) {
-    return this.prisma.door.groupBy({
+    const datas = await this.prisma.door.findMany({
       where: { buildingId },
-      by: ['gatewayMacId'],
     });
+    return datas.filter((data)=>data.doorMacId == data.gatewayMacId)
+
   }
 
   async getAllDoorByGatewayId(gatewayMacId: string) {
@@ -39,6 +60,18 @@ export class DoorService {
     });
   }
 
+
+  async getDoorInfoById(doorIds: number[]) {
+    return this.prisma.door.findMany({
+      where: {
+        doorId:{
+          in: doorIds
+        },
+      },
+    });
+  }
+
+
   async deleteOne(doorId: number) {
     return this.prisma.door.delete({
       where: {
@@ -46,4 +79,13 @@ export class DoorService {
       },
     });
   }
+
+  async deleteAllNodeAndGatewayusingGatewaymacid(gatewayMacId: string) {
+    return this.prisma.door.deleteMany({
+      where: {
+        gatewayMacId,
+      },
+    });
+  }
+
 }
