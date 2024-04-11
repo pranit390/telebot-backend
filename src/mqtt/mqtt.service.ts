@@ -15,7 +15,7 @@ export class MqttService implements OnModuleInit {
 
   async onModuleInit() {
     await this.connectToBroker();
-    await this.subscribe("pranitbhatt/feeds/reply",async (message) => {
+    await this.subscribe("Solutions16/feeds/reply",async (message) => {
       const data = JSON.parse(message)as unknown as MqttResponse;
 
       
@@ -64,7 +64,7 @@ export class MqttService implements OnModuleInit {
       // Handle received message
     });
 
-    await this.subscribe("pranitbhatt/feeds/heartbeat",async (message) => {
+    await this.subscribe("Solutions16/feeds/heartbeat",async (message) => {
       const data = JSON.parse(message) as unknown as MqttHeartbeat;
       switch (data.command) {
         case "I am alive":
@@ -91,8 +91,8 @@ export class MqttService implements OnModuleInit {
         clientId,
         clean: true,
         connectTimeout: 4000,
-        username: 'pranitbhatt',
-        password: 'aio_lpXF03A3YhttGzzTzy8913K10q9e',
+        username: 'Solutions16',
+        password: 'aio_tlJv98g8GMY1vSN5gkTeEjdlXycE',
         reconnectPeriod: 1000,
       });
       

@@ -278,7 +278,7 @@ export class UserService {
       user_id: userId
     }
 
-    const data = await this.mqtt.publish(`pranitbhatt/feeds/${door.gatewayMacId}`,JSON.stringify(payload));
+    const data = await this.mqtt.publish(`Solutions16/feeds/${door.gatewayMacId}`,JSON.stringify(payload));
 
 
     return door;

@@ -21,7 +21,7 @@ export class DoorService {
       "user_id": userId
       
       };
-    await this.mqtt.publish(`pranitbhatt/feeds/${data.gatewayMacId}`,JSON.stringify(payload));
+    await this.mqtt.publish(`Solutions16/feeds/${data.gatewayMacId}`,JSON.stringify(payload));
    }
    catch(err){
     console.error(`onboarding failed:${err}`)
